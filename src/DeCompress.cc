@@ -37,7 +37,7 @@ int DeCompress::tjpeg2yuv(unsigned char *jpeg_buffer, int jpeg_size, unsigned ch
                              padding, height, TJFLAG_FASTDCT);
     if (ret < 0)
     {
-        LOG(WARN,"compress to jpeg failed: %s\n", tjGetErrorStr());
+        LOG(INFO,"compress to jpeg failed: %s\n", tjGetErrorStr());
         return -1;
     }
 
