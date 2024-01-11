@@ -16,10 +16,14 @@ level = NOTICE
 width = 640
 height = 480
 fps = 30
-method = CRF      ; [CRF | ABR]
-bitrate = 1440    ; if ABR bitrate is efficient
-rf_constant = 23  ; if CRF rf_constant is efficient  
-format = YUY2 [YUY2 | MJPEG]
+;[CRF | ABR]
+method = CRF      
+;if ABR bitrate is efficient
+bitrate = 1440    
+;if CRF rf_constant is efficient
+rf_constant = 23    
+;[YUY2 | MJPEG]
+format = YUY2
 device = /dev/video0
 
 [server]
