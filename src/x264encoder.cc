@@ -4,11 +4,8 @@
 #include <cstring>
 #include <stdlib.h>
 
-X264Encoder::X264Encoder(const int width, const int height, const int bitrate,const int colorSpace) :
-	m_width(width),
-	m_height(height),
-	m_bitrate(bitrate),
-	m_colorSpace(colorSpace),
+X264Encoder::X264Encoder(X264_Param_t param) :
+	m_x264_param(param),
 	m_threadId(0)
 {
 	initialize();
@@ -33,15 +30,20 @@ int X264Encoder::initialize()
 	pic_in->i_pts = 0;
 	x264_param_default(param);
 
-	param->i_csp = m_colorSpace;
+	param->i_csp = m_x264_param.colorSpace;
 	param->i_threads = m_threadId;
-	param->i_width = m_width;
-	param->i_height	= m_height;
+	param->i_width = m_x264_param.width;
+	param->i_height	= m_x264_param.height;
 	param->i_fps_den = 1;
-	param->i_fps_num = 30;
+	param->i_fps_num = m_x264_param.fps;
 
-	param->rc.i_bitrate = m_bitrate;
-	param->rc.i_rc_method = X264_RC_ABR;
+	if (m_x264_param.method == "CRF") {
+		param->rc.f_rf_constant = m_x264_param.rf_constant;
+		param->rc.i_rc_method = X264_RC_CRF;
+	} else if (m_x264_param.method == "ABR") {
+		param->rc.i_bitrate = m_x264_param.bitrate;
+		param->rc.i_rc_method = X264_RC_ABR;
+	}
 
 	/* Use minimum latency ultrafast*/
 	param->i_sync_lookahead = 0;

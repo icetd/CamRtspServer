@@ -8,11 +8,20 @@
 #include <string>
 
 
+typedef struct{
+	int colorSpace;
+	int width;
+	int height;
+	int fps;
+	std::string method;
+	int bitrate;
+	int rf_constant;
+} X264_Param_t;
 
 class X264Encoder {
 public:
-	X264Encoder(const int width, const int height, const int bitrate, const int colorSpace);
-	X264Encoder(const int width, const int height, const int bitrate, const int colorSpace, int threadId);
+	X264Encoder(const X264_Param_t param);
+	X264Encoder(X264_Param_t, int threadId);
 	virtual ~X264Encoder();
 
 	int initialize();
@@ -21,10 +30,7 @@ public:
 	int startCode3(char *buf);
 	int startCode4(char *buf);
 private:
-	int m_width;
-	int m_height;
-	int m_bitrate;
-	int m_colorSpace;
+	X264_Param_t m_x264_param;
 	int m_threadId;
 	
 	x264_t *pHandle = nullptr;

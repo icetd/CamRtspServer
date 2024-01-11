@@ -25,7 +25,9 @@ void TransCoder::init()
         config.width = configs.GetInteger("video", "width", 640);
 		config.height = configs.GetInteger("video", "height", 480);
 		config.fps = configs.GetInteger("video", "fps", 30);
+		config.method = configs.Get("video", "rc_method", "CRF");
 		config.bitrate = configs.GetInteger("video", "bitrate", 1440);
+		config.rf_constant = configs.GetInteger("video", "rf_constant", 23);
 		config.format = configs.Get("video", "format", "UNKNOWN");
         config.device_name = configs.Get("video", "device", "/dev/video0");
 
@@ -45,7 +47,18 @@ void TransCoder::init()
                                DEBUG);
     
     capture = V4l2Capture::create(param);
-    encoder = new X264Encoder(config.width, config.height, config.bitrate, X264_CSP_I422);
+    
+    X264_Param_t x264_param = {
+        X264_CSP_I422,
+        config.width,
+        config.height,
+        config.fps,
+        config.method,
+        config.bitrate,
+        config.rf_constant
+    };
+    encoder = new X264Encoder(x264_param);
+
     decompress = new DeCompress();
     encodeData = (uint8_t*)malloc(capture->getBufferSize());
 }
