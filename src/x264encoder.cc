@@ -20,7 +20,6 @@ X264Encoder::~X264Encoder()
 
 int X264Encoder::initialize()
 {
-	int fps = 1;
 	isStop = false;
 
 	param = (x264_param_t*) malloc(sizeof(x264_param_t));
@@ -44,6 +43,9 @@ int X264Encoder::initialize()
 		param->rc.i_bitrate = m_x264_param.bitrate;
 		param->rc.i_rc_method = X264_RC_ABR;
 	}
+
+	param->i_keyint_max = m_x264_param.fps * 1;
+	param->i_keyint_min = m_x264_param.fps * 3;
 
 	/* Use minimum latency ultrafast*/
 	param->i_sync_lookahead = 0;
