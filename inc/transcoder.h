@@ -20,6 +20,7 @@ public:
         int width;
         int height;
         int fps;
+        int bitrate;
         std::string format;
         std::string device_name;
     } Config_t;

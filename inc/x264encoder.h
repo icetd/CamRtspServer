@@ -11,8 +11,8 @@
 
 class X264Encoder {
 public:
-	X264Encoder(const int width, const int height, const int colorSpace);
-	X264Encoder(const int width, const int height, const int colorSpace, int threadId);
+	X264Encoder(const int width, const int height, const int bitrate, const int colorSpace);
+	X264Encoder(const int width, const int height, const int bitrate, const int colorSpace, int threadId);
 	virtual ~X264Encoder();
 
 	int initialize();
@@ -23,6 +23,7 @@ public:
 private:
 	int m_width;
 	int m_height;
+	int m_bitrate;
 	int m_colorSpace;
 	int m_threadId;
 	
