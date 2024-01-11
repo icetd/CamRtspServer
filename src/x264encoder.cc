@@ -44,8 +44,6 @@ int X264Encoder::initialize()
 	param->b_sliced_threads = 4;
 	param->b_vfr_input = 0;
 
-	param->rc.i_bitrate = 2000;
-
 	param->b_cabac = 0;
 	/* 没有B帧
 	*/
