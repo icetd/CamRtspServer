@@ -7,6 +7,7 @@
 X264Encoder::X264Encoder(const int width, const int height, const int bitrate,const int colorSpace) :
 	m_width(width),
 	m_height(height),
+	m_bitrate(bitrate),
 	m_colorSpace(colorSpace),
 	m_threadId(0)
 {
