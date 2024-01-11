@@ -4,7 +4,7 @@
 #include <cstring>
 #include <stdlib.h>
 
-X264Encoder::X264Encoder(const int width, const int height, const int colorSpace) :
+X264Encoder::X264Encoder(const int width, const int height, const int bitrate,const int colorSpace) :
 	m_width(width),
 	m_height(height),
 	m_colorSpace(colorSpace),
@@ -38,7 +38,10 @@ int X264Encoder::initialize()
 	param->i_height	= m_height;
 	param->i_fps_den = 1;
 	param->i_fps_num = 30;
-	
+
+	param->rc.i_bitrate = m_bitrate;
+	param->rc.i_rc_method = X264_RC_ABR;
+
 	/* Use minimum latency ultrafast*/
 	param->i_sync_lookahead = 0;
 	param->b_sliced_threads = 4;

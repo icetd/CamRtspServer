@@ -25,6 +25,7 @@ void TransCoder::init()
         config.width = configs.GetInteger("video", "width", 640);
 		config.height = configs.GetInteger("video", "height", 480);
 		config.fps = configs.GetInteger("video", "fps", 30);
+		config.bitrate = configs.GetInteger("video", "bitrate", 1440);
 		config.format = configs.Get("video", "format", "UNKNOWN");
         config.device_name = configs.Get("video", "device", "/dev/video0");
 
@@ -44,7 +45,7 @@ void TransCoder::init()
                                DEBUG);
     
     capture = V4l2Capture::create(param);
-    encoder = new X264Encoder(config.width, config.height, X264_CSP_I422);
+    encoder = new X264Encoder(config.width, config.height, config.bitrate, X264_CSP_I422);
     decompress = new DeCompress();
     encodeData = (uint8_t*)malloc(capture->getBufferSize());
 }
@@ -77,7 +78,7 @@ void TransCoder::run()
                 startCode = 3;
             else 
                 startCode = 4;
-
+			
             if (onEncodedDataCallback && frameSize > 0) {
                 onEncodedDataCallback(std::vector<uint8_t>(encodeData + startCode, encodeData + frameSize));
             }
