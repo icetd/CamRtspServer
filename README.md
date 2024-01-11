@@ -16,6 +16,7 @@ level = NOTICE
 width = 640
 height = 480
 fps = 30
+bitrate = 1440
 ;format = MJPEG
 format = YUY2
 device = /dev/video0
