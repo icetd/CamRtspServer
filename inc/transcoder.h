@@ -23,6 +23,8 @@ public:
         std::string method;
         int bitrate;
         int rf_constant;
+        int min_ikeyint;
+        int max_ikeyint;
         std::string format;
         std::string device_name;
     } Config_t;

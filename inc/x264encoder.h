@@ -16,6 +16,8 @@ typedef struct{
 	std::string method;
 	int bitrate;
 	int rf_constant;
+	int min_ikeyint;
+	int max_ikeyint;
 } X264_Param_t;
 
 class X264Encoder {

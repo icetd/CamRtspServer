@@ -28,6 +28,8 @@ void TransCoder::init()
 		config.method = configs.Get("video", "rc_method", "CRF");
 		config.bitrate = configs.GetInteger("video", "bitrate", 1440);
 		config.rf_constant = configs.GetInteger("video", "rf_constant", 23);
+		config.min_ikeyint = configs.GetInteger("video", "min_ikeyint", 30);
+		config.max_ikeyint = configs.GetInteger("video", "max_ikeyint", 90);
 		config.format = configs.Get("video", "format", "UNKNOWN");
         config.device_name = configs.Get("video", "device", "/dev/video0");
 
@@ -55,7 +57,9 @@ void TransCoder::init()
         config.fps,
         config.method,
         config.bitrate,
-        config.rf_constant
+        config.rf_constant,
+        config.min_ikeyint,
+        config.max_ikeyint
     };
     encoder = new X264Encoder(x264_param);
 

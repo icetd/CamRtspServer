@@ -44,8 +44,8 @@ int X264Encoder::initialize()
 		param->rc.i_rc_method = X264_RC_ABR;
 	}
 
-	param->i_keyint_max = m_x264_param.fps * 1;
-	param->i_keyint_min = m_x264_param.fps * 3;
+	param->i_keyint_max = m_x264_param.min_ikeyint;
+	param->i_keyint_min = m_x264_param.max_ikeyint;
 
 	/* Use minimum latency ultrafast*/
 	param->i_sync_lookahead = 0;
