@@ -6,6 +6,14 @@ mkdir build && cd build
 cmake ..
 make
 ```
+### test env
+```
+gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
+g++ (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0
+```
+
+Make sure your build tools version is not very old
+
 ## config
 config with file configs/config.ini
 ```
