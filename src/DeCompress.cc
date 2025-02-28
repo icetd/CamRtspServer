@@ -34,7 +34,7 @@ int DeCompress::tjpeg2yuv(unsigned char *jpeg_buffer, int jpeg_size, unsigned ch
     }
 
     ret = tjDecompressToYUV2(m_handler, jpeg_buffer, jpeg_size, *yuv_buffer, width,
-                             padding, height, TJFLAG_FASTDCT);
+                             padding, height, TJFLAG_LIMITSCANS);
     if (ret < 0)
     {
         LOG(INFO,"compress to jpeg failed: %s\n", tjGetErrorStr());
