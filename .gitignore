@@ -2,3 +2,4 @@ build
 .vscode
 thirdparty/x264
 compile_commands.json
+.clang-format

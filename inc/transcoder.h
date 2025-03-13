@@ -12,7 +12,6 @@
 #include "V4l2Device.h"
 #include "V4l2Capture.h"
 
-
 class TransCoder : public MThread
 {
 public:
@@ -37,9 +36,10 @@ public:
     void setOnEncoderDataCallback(std::function<void(std::vector<uint8_t> &&)> callback);
 
     TransCoder::Config_t const &getConfig() const;
+
 private:
     Config_t config;
-    
+
     X264Encoder *encoder;
     V4l2Capture *capture;
     DeCompress *decompress;
@@ -50,6 +50,5 @@ private:
 
     std::function<void(std::vector<uint8_t> &&)> onEncodedDataCallback;
 };
-
 
 #endif
