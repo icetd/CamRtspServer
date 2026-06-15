@@ -122,37 +122,77 @@ int X264Encoder::initialize()
  */
 int X264Encoder::encode(uint8_t *inbuf, int insize, uint8_t *outbuf, std::string &format)
 {
-    int i = 0;
     int size = 0;
-
     uint8_t *out = outbuf;
-    uint8_t *y = pic_in->img.plane[0];
-    uint8_t *u = pic_in->img.plane[1];
-    uint8_t *v = pic_in->img.plane[2];
-
-    int is_y = 1, is_u = 1;
-    int y_index = 0, u_index = 0, v_index = 0;
+    
+    int width = m_x264_param.width;
+    int height = m_x264_param.height;
+    
     if (format == "MJPEG") {
-        memcpy(y, inbuf, insize / 2);
-        memcpy(u, inbuf + insize / 2, insize / 4);
-        memcpy(v, inbuf + insize * 3 / 4, insize / 4);
-    } else if (format == "YUY2") {
-        for (i = 0; i < insize; ++i) {
-            if (is_y) {
-                *(y + y_index) = *(inbuf + i);
-                ++y_index;
-                is_y = 0;
-            } else {
-                if (is_u) {
-                    *(u + u_index) = *(inbuf + i);
-                    ++u_index;
-                    is_u = 0;
-                } else {
-                    *(v + v_index) = *(inbuf + i);
-                    ++v_index;
-                    is_u = 1;
-                }
-                is_y = 1;
+        // MJPEG 解码后应该是 YUV420P 或者 YUV422P
+        int y_size = width * height;
+        int uv_size = y_size / 4;
+        uint8_t *y = pic_in->img.plane[0];
+        uint8_t *u = pic_in->img.plane[1];
+        uint8_t *v = pic_in->img.plane[2];
+
+        if (insize == y_size * 3 / 2) {
+            // YUV420P
+            memcpy(y, inbuf, y_size);
+            memcpy(u, inbuf + y_size, y_size / 4);
+            memcpy(v, inbuf + y_size + y_size / 4, y_size / 4);
+        } else if (insize == y_size * 2) {
+            // YUV422P
+            memcpy(y, inbuf, y_size);
+
+            uint8_t *src_u = inbuf + y_size;
+            uint8_t *src_v = src_u + y_size / 2;
+
+            // 422 -> 420
+            for (int row = 0; row < height / 2; row++) {
+                memcpy(
+                    u + row * width / 2,
+                    src_u + (row * 2) * width / 2,
+                    width / 2);
+
+                memcpy(
+                    v + row * width / 2,
+                    src_v + (row * 2) * width / 2,
+                    width / 2);
+            }
+        }
+    } 
+    else if (format == "YUY2") {
+        // YUY2 格式：Y0 U0 Y1 V0 Y2 U1 Y3 V1 ...
+        // 需要转换为 YUV420P（Y 平面大小 w*h，U/V 平面大小 w/2 * h/2）
+        
+        uint8_t *y = pic_in->img.plane[0];
+        uint8_t *u = pic_in->img.plane[1];
+        uint8_t *v = pic_in->img.plane[2];
+        
+        int y_index = 0;
+        int u_index = 0;
+        int v_index = 0;
+
+        for (int h = 0; h < height; h += 2) {
+            for (int w = 0; w < width; w += 2) {
+                int p0 = (h * width + w) * 2;
+                int p1 = (h * width + w + 1) * 2;
+                int p2 = ((h + 1) * width + w) * 2;
+                int p3 = ((h + 1) * width + w + 1) * 2;
+
+                uint8_t Y0 = inbuf[p0];
+                uint8_t U = inbuf[p0 + 1];
+                uint8_t Y1 = inbuf[p1];
+                uint8_t V = inbuf[p1 + 1];
+
+                y[(h * width) + w] = Y0;
+                y[(h * width) + w + 1] = Y1;
+                y[((h + 1) * width) + w] = inbuf[p2];
+                y[((h + 1) * width) + w + 1] = inbuf[p3];
+
+                u[(h / 2) * (width / 2) + (w / 2)] = U;
+                v[(h / 2) * (width / 2) + (w / 2)] = V;
             }
         }
     }
@@ -171,7 +211,11 @@ int X264Encoder::encode(uint8_t *inbuf, int insize, uint8_t *outbuf, std::string
         size += nals[j].i_payload;
         out += nals[j].i_payload;
     }
-    LOG(INFO, "h264 pts:%d fram size: %d", pic_in->i_pts, size);
+    
+    if (size > 0 && (pts % 30 == 0)) {
+        LOG(INFO, "h264 pts:%d frame size: %d", pic_in->i_pts, size);
+    }
+
     return size;
 }
 

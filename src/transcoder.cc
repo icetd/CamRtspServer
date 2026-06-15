@@ -51,7 +51,7 @@ void TransCoder::init()
     capture = V4l2Capture::create(param);
 
     X264_Param_t x264_param = {
-        X264_CSP_I422,
+        X264_CSP_I420,
         config.width,
         config.height,
         config.fps,
