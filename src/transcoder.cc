@@ -68,6 +68,7 @@ void TransCoder::init()
 
 void TransCoder::run()
 {
+    uint8_t *buffer;
     timeval tv;
     for (;;) {
         tv.tv_sec = 1;
@@ -75,8 +76,8 @@ void TransCoder::run()
         int startCode = 0;
         int ret = capture->isReadable(&tv);
         if (ret == 1) {
-            uint8_t buffer[capture->getBufferSize()];
-            int resize = capture->read((char *)buffer, sizeof(buffer));
+            buffer = (uint8_t *) malloc(capture->getBufferSize());
+            int resize = capture->read((char *)buffer, capture->getBufferSize());
             frameSize = 0;
             if (config.format == "MJPEG") {
                 ret = decompress->tjpeg2yuv(buffer, resize, &yuv_buf, &yuv_size);
@@ -96,6 +97,7 @@ void TransCoder::run()
 
             if (onEncodedDataCallback && frameSize > 0) {
                 onEncodedDataCallback(std::vector<uint8_t>(encodeData + startCode, encodeData + frameSize));
+                free(buffer);
             }
 
         } else if (ret == -1) {
